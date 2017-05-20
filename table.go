@@ -66,7 +66,7 @@ func (t *Table) ParseRow(pukiWikiText string) {
 			}
 
 		} else {
-			if v[0:1] == "~" {
+			if len(v) > 0 && v[0:1] == "~" {
 				cell.IsHead = true
 				cell.Text = ParseLine(v[1:])
 			} else {
@@ -85,6 +85,8 @@ func (t Table) String() string {
 	for _, row := range t.Cells {
 		// 先檢測是否整列都是表格標題
 
+		s += "|-\n"
+		
 		allIsHead := true
 		for _, cell := range row {
 			if cell.IsRowMerged || cell.IsColMerged {
@@ -126,7 +128,7 @@ func (t Table) String() string {
 				}
 
 			} else if cell.IsHead {
-				s += `! scope ` + attrs + `| ` + cell.Text
+				s += `! scope ` + attrs + ` | ` + cell.Text
 				s += "\n"
 			} else {
 				s += "| "

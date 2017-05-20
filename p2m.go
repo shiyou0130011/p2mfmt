@@ -25,7 +25,7 @@ func Parse(pukiText string) string {
 		}
 	}
 
-	return string(b.Bytes())
+	return string(b.Bytes()) + "\n== 註釋 ==\n"
 }
 
 // 轉換任意時候均可轉換的內容
