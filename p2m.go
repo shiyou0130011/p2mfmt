@@ -6,7 +6,6 @@ import (
 	"strings"
 )
 
-
 func Parse(pukiText string) string {
 	splitedWiki := strings.Split(pukiText, "\n")
 
@@ -70,7 +69,16 @@ func ParseLine(wikiText string) string {
 		func(s string) string {
 			s = strings.NewReplacer("[[", "", "]]", "").Replace(s)
 			vars := strings.Split(s, ">")
-			return `[[` + vars[1] + "|" + vars[0] + `]]`
+
+			pageTitle := vars[1]
+			linkText := vars[0]
+
+			if strings.Contains(pageTitle, "://") {
+				// 此為超連結
+				return `[` + pageTitle + " " + linkText + `]`
+			}
+
+			return `[[` + pageTitle + "|" + linkText + `]]`
 		},
 	)
 
