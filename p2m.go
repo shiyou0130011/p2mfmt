@@ -23,8 +23,16 @@ func Parse(pukiText string) string {
 			b.WriteString(ParseLine(v) + "\n")
 		}
 	}
-
-	return string(b.Bytes()) + "\n== 註釋 ==\n"
+	
+	result := string(b.Bytes())
+	
+	if strings.Contains(result, "<ref>"){
+		result += "\n== 備註 ==\n<references/>\n\n"
+	}
+	
+	
+	
+	return result
 }
 
 // 轉換任意時候均可轉換的內容
