@@ -6,13 +6,26 @@ import (
 	"strings"
 )
 
-func Parse(pukiText string) string {
+//
+func Convert(pukiText string) (string, []string) {
 	splitedWiki := strings.Split(pukiText, "\n")
 
 	var b bytes.Buffer
 	var table Table
 
+	categories := []string{}
+
 	for _, v := range splitedWiki {
+		v = regexp.MustCompile(`#navi\(.*\)`).ReplaceAllStringFunc(
+			v,
+			func(s string) string {
+				s = strings.NewReplacer("#navi(", "", ")", "").Replace(s)
+				categories = append(categories, s)
+
+				return ""
+			},
+		)
+
 		if v != "" && v[0:1] == "|" && v[len(v)-1:] == "|" {
 			table.ParseRow(v)
 		} else {
@@ -20,24 +33,22 @@ func Parse(pukiText string) string {
 				b.WriteString(table.String() + "\n")
 				table.Cells = nil
 			}
-			b.WriteString(ParseLine(v) + "\n")
+			b.WriteString(ConvertLine(v) + "\n")
 		}
 	}
-	
+
 	result := string(b.Bytes())
-	
-	if strings.Contains(result, "<ref>"){
+
+	if strings.Contains(result, "<ref>") {
 		result += "\n== 備註 ==\n<references/>\n\n"
 	}
-	
-	
-	
-	return result
+
+	return result, categories
 }
 
 // 轉換任意時候均可轉換的內容
 // 例如換行符號、引用/註解、圖片……等
-func ParseLine(wikiText string) string {
+func ConvertLine(wikiText string) string {
 	if wikiText == "" {
 		return ""
 	}
