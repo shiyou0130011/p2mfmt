@@ -170,7 +170,22 @@ func ConvertLine(wikiText string) string {
 	wikiText = strings.Replace(wikiText, "<i>", "''", -1)
 	// TODO 處理顏色、背景、置左/中/右
 	
+	// 轉換回復的時間格式
+	// pukiwiki 在進行回覆的時候，格式如下
+	//
+	// - 我的回覆 -- &new{2009-01-26 (月) 01:02:59};
+	//
+	// 前面已經轉換 list 了，這邊是將 &new{2009-01-26 (月) 01:02:59}; 轉換成
+	//
+	// <time>2009-01-26 (月) 01:02:59</time>
+	//
 	
+	wikiText = regexp.MustCompile("&new{.*}").ReplaceAllStringFunc(
+		wikiText,
+		func(s string) string {
+			return "<time>" + s[5:len(s)-2] + "</time>"
+		},
+	)
 	
 	return wikiText
 }
