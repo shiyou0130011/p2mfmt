@@ -6,6 +6,7 @@ import (
 	"strings"
 )
 
+
 //
 func Convert(pukiText string) (string, []string) {
 	splitedWiki := strings.Split(pukiText, "\n")
@@ -23,6 +24,13 @@ func Convert(pukiText string) (string, []string) {
 				categories = append(categories, s)
 
 				return ""
+			},
+		)
+		
+		v = regexp.MustCompile(`#comment\(.*\)`).ReplaceAllStringFunc(
+			v,
+			func(s string) string {
+				return "<!-- コメントの挿入 -->\n<!-- " + s + " -->"
 			},
 		)
 
@@ -53,6 +61,7 @@ func ConvertLine(wikiText string) string {
 		return ""
 	}
 
+	
 	// 轉換標題
 	if wikiText[0:1] == "*" {
 		noneTitleIndexes := regexp.MustCompile(`[^\* ]`).FindStringIndex(wikiText)
@@ -71,9 +80,12 @@ func ConvertLine(wikiText string) string {
 	if wikiText[0:1] == "-" {
 		noneListIndexes := regexp.MustCompile(`[^\- ]`).FindStringIndex(wikiText)
 		if noneListIndexes != nil {
-			l := wikiText[0:noneListIndexes[0]]
-			l = strings.Replace(l, "-", "*", -1)
-			wikiText = l + wikiText[noneListIndexes[0]:]
+			l := strings.Trim(wikiText[0:noneListIndexes[0]], " \t")
+			if(len(l) != 0){
+				l = strings.Repeat(":", len(l) - 1) + "*"
+			}
+			
+			wikiText = l + " " + wikiText[noneListIndexes[0]:]
 		}
 	}
 
@@ -151,5 +163,14 @@ func ConvertLine(wikiText string) string {
 	wikiText = strings.Replace(wikiText, "((", "<ref>", -1)
 	wikiText = strings.Replace(wikiText, "))", "</ref>", -1)
 
+	// 轉換粗斜體
+	wikiText = strings.Replace(wikiText, "''", "<b>", -1)
+	wikiText = strings.Replace(wikiText, "'''", "<i>", -1)
+	wikiText = strings.Replace(wikiText, "<b>", "'''", -1)
+	wikiText = strings.Replace(wikiText, "<i>", "''", -1)
+	// TODO 處理顏色、背景、置左/中/右
+	
+	
+	
 	return wikiText
 }
