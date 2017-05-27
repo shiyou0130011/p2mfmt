@@ -11,9 +11,9 @@ func ExampleTable() {
 	table.ParseRow(`| John | 27 | M |`)
 	table.ParseRow(`| Anny | 16 | F |`)
 	table.ParseRow(`| Mike | 19 | M |`)
-	
+
 	fmt.Print(table)
-	
+
 	// Output:
 	// {| class="wikitable"
 	// |-
@@ -40,16 +40,17 @@ func ExampleConvert() {
 -- Sub List(( This is a reference ))
 
 ** Table
+
 |~Name|~Age|~Sex|
 | Anny | 16 | F |
 | John | 27 | M |
 | Mike | 19 |~|`
-	
+
 	mediawiki, category := p2mfmt.Convert(puki)
 	fmt.Printf("Mediawiki: \n%s\n\n", mediawiki)
-	
+
 	fmt.Printf("Categories: %v", category)
-	
+
 	// Output:
 	// Mediawiki:
 	// = Title=
