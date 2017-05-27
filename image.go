@@ -16,7 +16,8 @@ func (i Image) String() string {
 	urlSplit := strings.Split(i.Url, "/")
 	s += urlSplit[len(urlSplit)-1][0:]
 
-	if i.Size != "" {
+	if i.Size != "" && strings.Contains(i.Size, "px"){
+		// mediawiki 要設置圖片大小只接受 px 的單位
 		s += "|" + i.Size
 	}
 
