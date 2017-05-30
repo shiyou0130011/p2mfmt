@@ -80,7 +80,7 @@ func (t *Table) ParseRow(pukiWikiText string) {
 }
 
 func (t Table) String() string {
-	s := `{| class="wikitable"` + "\n"
+	s := `{| class="wikitable" style="margin: 0 auto;" ` + "\n"
 
 	for _, row := range t.Cells {
 		// 先檢測是否整列都是表格標題
