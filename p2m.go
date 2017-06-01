@@ -8,7 +8,10 @@ import (
 
 //
 func Convert(pukiText string) (string, []string) {
-	splitedWiki := strings.Split(pukiText, "\n")
+	splitedWiki := strings.Split(
+		strings.Replace(pukiText, "\r\n", "\n", -1),
+		"\n",
+	)
 
 	var b bytes.Buffer
 	var table Table
@@ -184,6 +187,27 @@ func ConvertLine(wikiText string) string {
 			return "<time>" + s[5:len(s)-2] + "</time>"
 		},
 	)
+
+	// 轉換註解
+	if strings.Contains(wikiText, "//") {
+		s := strings.Split(wikiText, "//")
+		hasComment := false
+
+		for i, v := range s {
+			if len(v) > 0 && v[len(v)-1:] == ":" {
+				s[i] += "//"
+			} else if i != len(s)-1 {
+				s[i] += "<!-- "
+				hasComment = true
+				break
+			}
+
+		}
+		wikiText = strings.Join(s, "")
+		if hasComment {
+			wikiText += " -->"
+		}
+	}
 
 	return wikiText
 }
