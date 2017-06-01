@@ -98,10 +98,14 @@ func (t Table) String() string {
 			}
 		}
 
+		wroteCellOfRow := -1 // 此列第幾個被繪製的儲存格
+
 		for index, cell := range row {
 			if cell.IsRowMerged || cell.IsColMerged {
 				continue
 			}
+
+			wroteCellOfRow++
 
 			// 處理 attributes
 			attrs := ""
@@ -114,7 +118,12 @@ func (t Table) String() string {
 
 			// 處理表格標題
 			if allIsHead {
-				s += "! "
+				if wroteCellOfRow == 0 {
+					s += "! "
+				} else {
+					s += "!! "
+				}
+
 				if attrs != "" {
 					s += attrs + " | "
 				}
@@ -122,16 +131,21 @@ func (t Table) String() string {
 
 				if index == len(row)-1 {
 					// 此列最後一個儲存格
-					s += " \n"
+					s += " "
 				} else {
-					s += " !"
+					s += " "
 				}
 
 			} else if cell.IsHead {
 				s += `! scope ` + attrs + ` | ` + cell.Text
 				s += "\n"
 			} else {
-				s += "| "
+				if wroteCellOfRow == 0 {
+					s += "| "
+				} else {
+					s += "|| "
+				}
+
 				if attrs != "" {
 					s += attrs + " | "
 				}
@@ -139,12 +153,13 @@ func (t Table) String() string {
 
 				if index == len(row)-1 {
 					// 此列最後一個儲存格
-					s += " \n"
+					s += " "
 				} else {
-					s += " |"
+					s += " "
 				}
 			}
 		}
+		s += "\n"
 
 	}
 

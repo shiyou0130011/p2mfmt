@@ -54,12 +54,26 @@ func ExampleConvert() {
 	// Output:
 	// Mediawiki:
 	// = Title=
+	//
+	//
 	// * list 1
 	// * list 2
 	// * list 3
-	// ** Sub List<ref> This is a reference </ref>
+	// :* Sub List<ref> This is a reference </ref>
 	//
 	// == Table==
+	//
+	// {| class="wikitable" style="margin: 0 auto;"
+	// |-
+	// ! Name !! Age  !! Sex
+	// |-
+	// |  Anny  ||  16  ||  F
+	// |-
+	// |  John  ||  27  || rowspan = "2" |  M
+	// |-
+	// |  Mike  ||  19
+	// |}
+	//
 	//
 	// == 備註 ==
 	// <references/>
