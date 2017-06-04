@@ -208,6 +208,13 @@ func ConvertLine(wikiText string) string {
 			wikiText += " -->"
 		}
 	}
-
+	
+	// 防止簽名
+	// ~~~ 在 mediawiki 是著名是誰寫的用的。
+	// 但在 pukiwiki，這沒有用途。
+	// 避免在轉換時，也將 ~~~ 轉成 mediawiki 簽名。
+	wikiText = strings.Replace(wikiText, "~~~", "<nowiki>~~~</nowiki>", -1)
+	
+	
 	return wikiText
 }
