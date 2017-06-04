@@ -96,7 +96,7 @@ func ConvertLine(wikiText string) string {
 	// puki wiki 格式是 [[連結文字>頁面標題]]
 	// media wiki 則是 [[頁面標題|連結文字]]
 	//
-	wikiText = regexp.MustCompile(`\[\[[^\>]*>[^\>]*\]\]`).ReplaceAllStringFunc(
+	wikiText = regexp.MustCompile(`\[\[[^\>\[\]]*>[^\>\[\]]*\]\]`).ReplaceAllStringFunc(
 		wikiText,
 		func(s string) string {
 			s = strings.NewReplacer("[[", "", "]]", "").Replace(s)
