@@ -53,14 +53,15 @@ func ExampleConvert() {
 
 	// Output:
 	// Mediawiki:
-	// = Title=
-	//
-	//
+	// = Title= 
+	// 
+	// 
+	// == Main List== 
 	// * list 1
 	// * list 2
 	// * list 3
 	// :* Sub List<ref> This is a reference </ref>
-	//
+	// 
 	// == Table==
 	//
 	// {| class="wikitable" style="margin: 0 auto;"
@@ -77,6 +78,8 @@ func ExampleConvert() {
 	//
 	// == 備註 ==
 	// <references/>
-	//
+	// 
+	// 
+	// 
 	// Categories: [Example]
 }
