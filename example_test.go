@@ -15,7 +15,7 @@ func ExampleTable() {
 	fmt.Print(table)
 
 	// Output:
-	// {| class="wikitable"
+	// {| class="wikitable" style="margin: 0 auto;"
 	// |-
 	// ! Name !! Age !! Sex
 	// |-
