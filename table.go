@@ -13,6 +13,7 @@ type Table struct {
 // 儲存格
 type tableCell struct {
 	Text string
+	Style map[string]string // 儲存格樣式
 
 	ColSpan int // colspan 的值
 	RowSpan int // rowspan 的值
@@ -66,13 +67,22 @@ func (t *Table) ParseRow(pukiWikiText string) {
 			}
 
 		} else {
+			var text = "" //儲存格內文
+			
 			if len(v) > 0 && v[0:1] == "~" {
 				cell.IsHead = true
-				cell.Text = ConvertLine(v[1:])
+				text = v[1:]
 			} else {
-				cell.Text = ConvertLine(v)
+				text = v
 			}
-
+			
+			
+			// 處理儲存格樣式
+			styles, text := ConvertFirstOfLine(text)
+			text = ConvertLine(text)
+			
+			cell.Text = text
+			cell.Style = styles
 		}
 		cells = append(cells, cell)
 	}
@@ -113,8 +123,20 @@ func (t Table) String() string {
 				attrs += fmt.Sprintf(`colspan = "%d" `, cell.ColSpan)
 			}
 			if cell.RowSpan > 1 {
-				attrs += fmt.Sprintf(`rowspan = "%d"`, cell.RowSpan)
+				attrs += fmt.Sprintf(`rowspan = "%d" `, cell.RowSpan)
 			}
+			if cell.Style != nil {
+				s := ""
+				for k, v:= range(cell.Style){
+					s += k + ": " + v + "; "
+				}
+				if s != ""{
+					attrs += fmt.Sprintf(`style = "%s" `, s)	
+				}
+				
+			}
+			
+			
 
 			// 處理表格標題
 			if allIsHead {

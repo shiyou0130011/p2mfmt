@@ -36,7 +36,11 @@ func Convert(pukiText string) (string, []string) {
 			},
 		)
 
-		if v != "" && v[0:1] == "|" && v[len(v)-1:] == "|" {
+		if v != "" && v[0:1] == "|" && (v[len(v)-1:] == "|" || v[len(v)-2:] == "|h") {
+			if v[len(v)-2:] == "|h" {
+				v = v[0:len(v)-1]
+			}
+			
 			table.ParseRow(v)
 		} else {
 			if table.Cells != nil {
@@ -62,6 +66,8 @@ func ConvertLine(wikiText string) string {
 	if wikiText == "" {
 		return ""
 	}
+	var styles map[string]string
+	var listPrefix string
 
 	// 轉換標題
 	if wikiText[0:1] == "*" {
@@ -75,19 +81,25 @@ func ConvertLine(wikiText string) string {
 			wikiText = h + title + h
 		}
 	}
+	
+	
 	// 轉換引用
 
 	// 轉換清單
 	if wikiText[0:1] == "-" {
 		noneListIndexes := regexp.MustCompile(`[^\- ]`).FindStringIndex(wikiText)
 		if noneListIndexes != nil {
-			l := strings.Trim(wikiText[0:noneListIndexes[0]], " \t")
-			if len(l) != 0 {
-				l = strings.Repeat(":", len(l)-1) + "*"
+			listPrefix = strings.Trim(wikiText[0:noneListIndexes[0]], " \t")
+			if len(listPrefix) != 0 {
+				listPrefix = strings.Repeat(":", len(listPrefix)-1) + "*"
 			}
-
-			wikiText = l + " " + wikiText[noneListIndexes[0]:]
+			
+			wikiText = wikiText[noneListIndexes[0]:]
+			
+			styles, wikiText = ConvertFirstOfLine(wikiText)
 		}
+	}else {
+		styles, wikiText = ConvertFirstOfLine(wikiText)
 	}
 
 	//
@@ -215,6 +227,27 @@ func ConvertLine(wikiText string) string {
 	// 避免在轉換時，也將 ~~~ 轉成 mediawiki 簽名。
 	wikiText = strings.Replace(wikiText, "~~~", "<nowiki>~~~</nowiki>", -1)
 	
+	
+	// 處理樣式
+	if styles != nil{
+		_, setTextAlign := styles["text-align"]
+		
+		styleText := ""
+		for i, v:= range styles {
+			styleText += i + ": " + v + "; "
+		}
+		
+		if setTextAlign{
+			wikiText = `<div style="` + styleText + `">` + wikiText + `</div>`
+		}else if styleText != ""{
+			
+			wikiText = `<span style="` + styleText + `">` + wikiText + `</span>`
+		}
+	}
+	
+	if listPrefix != ""{
+		wikiText = listPrefix + " " + wikiText
+	}
 	
 	return wikiText
 }
